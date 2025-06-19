@@ -92,5 +92,6 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
             </tr>
         <?php endforeach; ?>
     </table>
+    <a href="index.php" style="display:inline-block; margin-top:20px; background:#ddd; padding:10px 20px; text-decoration:none; color:black; border-radius:5px;">⬅️ رجوع للرئيسية</a>
 </body>
 </html>
