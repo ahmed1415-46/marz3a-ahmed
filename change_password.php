@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
@@ -9,19 +10,20 @@ require 'db.php';
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_SESSION['user'];
     $current = $_POST['current'];
     $new = $_POST['new'];
     $confirm = $_POST['confirm'];
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$_SESSION['user']]);
+    $stmt->execute([$username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($current, $user['password'])) {
         if ($new === $confirm) {
-            $hashed = password_hash($new, PASSWORD_DEFAULT);
+            $new_hashed = password_hash($new, PASSWORD_DEFAULT);
             $stmt = $db->prepare("UPDATE users SET password = ? WHERE username = ?");
-            $stmt->execute([$hashed, $_SESSION['user']]);
+            $stmt->execute([$new_hashed, $username]);
             $message = "✅ تم تغيير كلمة المرور بنجاح.";
         } else {
             $message = "❌ كلمة المرور الجديدة غير متطابقة.";
@@ -37,16 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>تغيير كلمة المرور - مزرعة أحمد</title>
-    <style>
-        body { font-family: Arial; padding: 30px; background: #f0f0f0; direction: rtl; }
-        form { background: #fff; padding: 20px; border: 1px solid #ccc; max-width: 400px; margin: auto; }
-        input { width: 100%; padding: 10px; margin-bottom: 10px; }
-        button { background: green; color: white; border: none; padding: 10px; width: 100%; }
-        .msg { text-align: center; color: darkred; font-weight: bold; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>🔒 تغيير كلمة المرور</h2>
+
+<header>🔐 تغيير كلمة المرور</header>
+
+<nav>
+    <a href="index.php">الرئيسية</a>
+    <a href="expenses.php">المصروفات</a>
+    <a href="income.php">الإيرادات</a>
+    <a href="sheep.php">الأغنام</a>
+    <a href="change_password.php">كلمة المرور</a>
+    <a href="logout.php" style="color:#ffc107;">خروج</a>
+</nav>
+
+<div class="container">
+
     <form method="post">
         <label>كلمة المرور الحالية:</label>
         <input type="password" name="current" required>
@@ -54,12 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>كلمة المرور الجديدة:</label>
         <input type="password" name="new" required>
 
-        <label>تأكيد كلمة المرور:</label>
+        <label>تأكيد كلمة المرور الجديدة:</label>
         <input type="password" name="confirm" required>
 
-        <button type="submit">تحديث</button>
+        <button type="submit">تحديث كلمة المرور</button>
     </form>
+
     <div class="msg"><?= $message ?></div>
-    <a href="index.php" style="display:inline-block; margin-top:20px; background:#ddd; padding:10px 20px; text-decoration:none; color:black; border-radius:5px;">⬅️ رجوع للرئيسية</a>
+
+</div>
+
 </body>
 </html>
