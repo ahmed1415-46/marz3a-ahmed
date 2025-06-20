@@ -43,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>كلمة المرور:</label>
         <input type="password" name="password" required>
         <button type="submit">دخول</button>
+        <br><br>
+<a href="forgot_password.php">هل نسيت كلمة المرور؟</a>
         <?php if ($error): ?>
             <p class="error"><?= $error ?></p>
         <?php endif; ?>
