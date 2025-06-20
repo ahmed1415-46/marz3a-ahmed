@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
@@ -43,7 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<header>🔐 تغيير كلمة المرور</header>
+<header>
+    <img src="logo.png" alt="شعار مزرعة أحمد" style="height:40px; vertical-align: middle;">
+    <span style="margin-right: 10px;">مزرعة أحمد - تغيير كلمة المرور</span>
+</header>
 
 <nav>
     <a href="index.php">الرئيسية</a>
@@ -51,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="income.php">الإيرادات</a>
     <a href="sheep.php">الأغنام</a>
     <a href="change_password.php">كلمة المرور</a>
+    <a href="change_username.php">تغيير الاسم</a>
     <a href="logout.php" style="color:#ffc107;">خروج</a>
 </nav>
 
