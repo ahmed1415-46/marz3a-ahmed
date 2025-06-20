@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
@@ -7,38 +8,40 @@ if (!isset($_SESSION['user'])) {
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $type = $_POST['type'];
-    $amount = $_POST['amount'];
+    $status = $_POST['status'];
     $date = $_POST['date'];
     $notes = $_POST['notes'];
 
-    $stmt = $db->prepare("INSERT INTO expenses (type, amount, date, notes) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$type, $amount, $date, $notes]);
-    header("Location: expenses.php");
+    $stmt = $db->prepare("INSERT INTO sheep (status, date, notes) VALUES (?, ?, ?)");
+    $stmt->execute([$status, $date, $notes]);
+    header("Location: sheep.php");
     exit;
 }
 
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $db->exec("DELETE FROM expenses WHERE id = $id");
-    header("Location: expenses.php");
+    $db->exec("DELETE FROM sheep WHERE id = $id");
+    header("Location: sheep.php");
     exit;
 }
 
-$expenses = $db->query("SELECT * FROM expenses ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC);
-$total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
+$sheep = $db->query("SELECT * FROM sheep ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC);
+$total = $db->query("SELECT COUNT(*) FROM sheep WHERE status != 'تم البيع'")->fetchColumn() ?: 0;
 ?>
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>المصروفات - مزرعة أحمد</title>
+    <title>الأغنام - مزرعة أحمد</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>💸 إدارة المصروفات</header>
+<header>
+    <img src="logo.png" alt="شعار مزرعة أحمد" style="height:40px; vertical-align: middle;">
+    <span style="margin-right: 10px;">مزرعة أحمد - إدارة الأغنام</span>
+</header>
 
 <nav>
     <a href="index.php">الرئيسية</a>
@@ -46,23 +49,20 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
     <a href="income.php">الإيرادات</a>
     <a href="sheep.php">الأغنام</a>
     <a href="change_password.php">كلمة المرور</a>
+    <a href="change_username.php">تغيير الاسم</a>
     <a href="logout.php" style="color:#ffc107;">خروج</a>
 </nav>
 
 <div class="container">
 
     <form method="post">
-        <label>نوع المصروف:</label>
-        <select name="type" required>
-            <option>علف</option>
-            <option>دواء</option>
-            <option>أجرة عمال</option>
-            <option>صيانة</option>
-            <option>نقل</option>
+        <label>الحالة:</label>
+        <select name="status" required>
+            <option>تم الشراء</option>
+            <option>تم البيع</option>
+            <option>نفق</option>
+            <option>مولود جديد</option>
         </select>
-
-        <label>المبلغ (ر.س):</label>
-        <input type="number" name="amount" required>
 
         <label>التاريخ:</label>
         <input type="date" name="date" required>
@@ -70,26 +70,24 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
         <label>ملاحظات:</label>
         <input type="text" name="notes">
 
-        <button type="submit">حفظ المصروف</button>
+        <button type="submit">حفظ السجل</button>
     </form>
 
-    <h3>إجمالي المصروفات: <?= number_format($total, 2) ?> ر.س</h3>
+    <h3>عدد الأغنام الحالي: <?= $total ?></h3>
 
     <table>
         <tr>
-            <th>النوع</th>
-            <th>المبلغ</th>
+            <th>الحالة</th>
             <th>التاريخ</th>
             <th>ملاحظات</th>
             <th>إجراء</th>
         </tr>
-        <?php foreach ($expenses as $e): ?>
+        <?php foreach ($sheep as $s): ?>
             <tr>
-                <td><?= htmlspecialchars($e['type']) ?></td>
-                <td><?= number_format($e['amount'], 2) ?></td>
-                <td><?= $e['date'] ?></td>
-                <td><?= htmlspecialchars($e['notes']) ?></td>
-                <td><a href="?delete=<?= $e['id'] ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')"><button class="delete">حذف</button></a></td>
+                <td><?= htmlspecialchars($s['status']) ?></td>
+                <td><?= $s['date'] ?></td>
+                <td><?= htmlspecialchars($s['notes']) ?></td>
+                <td><a href="?delete=<?= $s['id'] ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')"><button class="delete">حذف</button></a></td>
             </tr>
         <?php endforeach; ?>
     </table>
