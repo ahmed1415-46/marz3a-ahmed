@@ -6,56 +6,59 @@ if (!isset($_SESSION['user'])) {
 }
 require 'db.php';
 
-// إضافة إيراد
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type = $_POST['type'];
     $amount = $_POST['amount'];
     $date = $_POST['date'];
     $notes = $_POST['notes'];
 
-    $stmt = $db->prepare("INSERT INTO income (type, amount, date, notes) VALUES (?, ?, ?, ?)");
+    $stmt = $db->prepare("INSERT INTO expenses (type, amount, date, notes) VALUES (?, ?, ?, ?)");
     $stmt->execute([$type, $amount, $date, $notes]);
-    header("Location: income.php");
+    header("Location: expenses.php");
     exit;
 }
 
-// حذف إيراد
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $db->exec("DELETE FROM income WHERE id = $id");
-    header("Location: income.php");
+    $db->exec("DELETE FROM expenses WHERE id = $id");
+    header("Location: expenses.php");
     exit;
 }
 
-// جلب الإيرادات
-$incomes = $db->query("SELECT * FROM income ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC);
-$total = $db->query("SELECT SUM(amount) FROM income")->fetchColumn() ?: 0;
+$expenses = $db->query("SELECT * FROM expenses ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC);
+$total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
 ?>
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إيرادات مزرعة أحمد</title>
-    <style>
-        body { font-family: Arial; padding: 30px; background: #f0fff0; direction: rtl; }
-        table { width: 100%; border-collapse: collapse; background: #fff; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: right; }
-        form { margin-bottom: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; }
-        input, select { padding: 10px; width: 100%; margin-bottom: 10px; }
-        button { background: green; color: white; border: none; padding: 10px; width: 100%; }
-        a { color: red; text-decoration: none; }
-    </style>
+    <title>المصروفات - مزرعة أحمد</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>إدارة الإيرادات</h1>
+
+<header>💸 إدارة المصروفات</header>
+
+<nav>
+    <a href="index.php">الرئيسية</a>
+    <a href="expenses.php">المصروفات</a>
+    <a href="income.php">الإيرادات</a>
+    <a href="sheep.php">الأغنام</a>
+    <a href="change_password.php">كلمة المرور</a>
+    <a href="logout.php" style="color:#ffc107;">خروج</a>
+</nav>
+
+<div class="container">
 
     <form method="post">
-        <label>نوع الإيراد:</label>
+        <label>نوع المصروف:</label>
         <select name="type" required>
-            <option>بيع</option>
-            <option>منحة</option>
-            <option>دخل آخر</option>
+            <option>علف</option>
+            <option>دواء</option>
+            <option>أجرة عمال</option>
+            <option>صيانة</option>
+            <option>نقل</option>
         </select>
 
         <label>المبلغ (ر.س):</label>
@@ -67,10 +70,10 @@ $total = $db->query("SELECT SUM(amount) FROM income")->fetchColumn() ?: 0;
         <label>ملاحظات:</label>
         <input type="text" name="notes">
 
-        <button type="submit">حفظ الإيراد</button>
+        <button type="submit">حفظ المصروف</button>
     </form>
 
-    <h2>إجمالي الإيرادات: <?= number_format($total, 2) ?> ر.س</h2>
+    <h3>إجمالي المصروفات: <?= number_format($total, 2) ?> ر.س</h3>
 
     <table>
         <tr>
@@ -80,16 +83,18 @@ $total = $db->query("SELECT SUM(amount) FROM income")->fetchColumn() ?: 0;
             <th>ملاحظات</th>
             <th>إجراء</th>
         </tr>
-        <?php foreach ($incomes as $i): ?>
+        <?php foreach ($expenses as $e): ?>
             <tr>
-                <td><?= htmlspecialchars($i['type']) ?></td>
-                <td><?= number_format($i['amount'], 2) ?></td>
-                <td><?= $i['date'] ?></td>
-                <td><?= htmlspecialchars($i['notes']) ?></td>
-                <td><a href="?delete=<?= $i['id'] ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')">حذف</a></td>
+                <td><?= htmlspecialchars($e['type']) ?></td>
+                <td><?= number_format($e['amount'], 2) ?></td>
+                <td><?= $e['date'] ?></td>
+                <td><?= htmlspecialchars($e['notes']) ?></td>
+                <td><a href="?delete=<?= $e['id'] ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')"><button class="delete">حذف</button></a></td>
             </tr>
         <?php endforeach; ?>
     </table>
-    <a href="index.php" style="display:inline-block; margin-top:20px; background:#ddd; padding:10px 20px; text-decoration:none; color:black; border-radius:5px;">⬅️ رجوع للرئيسية</a>
+
+</div>
+
 </body>
 </html>
