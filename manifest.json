@@ -1,0 +1,17 @@
+{
+  "name": "مزرعة أحمد",
+  "short_name": "مزرعة",
+  "start_url": "index.php",
+  "display": "standalone",
+  "background_color": "#007BFF",
+  "theme_color": "#007BFF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "lang": "ar"
+}
