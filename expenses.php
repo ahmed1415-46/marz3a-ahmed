@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
 }
 require 'db.php';
 
-// إضافة مصروف جديد
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type = $_POST['type'];
     $amount = $_POST['amount'];
@@ -19,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// حذف مصروف
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $db->exec("DELETE FROM expenses WHERE id = $id");
@@ -27,7 +25,6 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// جلب المصروفات
 $expenses = $db->query("SELECT * FROM expenses ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC);
 $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
 ?>
@@ -36,19 +33,23 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مصروفات مزرعة أحمد</title>
-    <style>
-        body { font-family: Arial; padding: 30px; background: #f9f9f9; direction: rtl; }
-        table { width: 100%; border-collapse: collapse; background: #fff; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: right; }
-        form { margin-bottom: 20px; background: #fff; padding: 20px; border: 1px solid #ccc; }
-        input, select { padding: 10px; width: 100%; margin-bottom: 10px; }
-        button { background: green; color: white; border: none; padding: 10px; width: 100%; }
-        a { color: red; text-decoration: none; }
-    </style>
+    <title>المصروفات - مزرعة أحمد</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>إدارة المصروفات</h1>
+
+<header>💸 إدارة المصروفات</header>
+
+<nav>
+    <a href="index.php">الرئيسية</a>
+    <a href="expenses.php">المصروفات</a>
+    <a href="income.php">الإيرادات</a>
+    <a href="sheep.php">الأغنام</a>
+    <a href="change_password.php">كلمة المرور</a>
+    <a href="logout.php" style="color:#ffc107;">خروج</a>
+</nav>
+
+<div class="container">
 
     <form method="post">
         <label>نوع المصروف:</label>
@@ -72,7 +73,7 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
         <button type="submit">حفظ المصروف</button>
     </form>
 
-    <h2>إجمالي المصروفات: <?= number_format($total, 2) ?> ر.س</h2>
+    <h3>إجمالي المصروفات: <?= number_format($total, 2) ?> ر.س</h3>
 
     <table>
         <tr>
@@ -88,10 +89,12 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
                 <td><?= number_format($e['amount'], 2) ?></td>
                 <td><?= $e['date'] ?></td>
                 <td><?= htmlspecialchars($e['notes']) ?></td>
-                <td><a href="?delete=<?= $e['id'] ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')">حذف</a></td>
+                <td><a href="?delete=<?= $e['id'] ?>" onclick="return confirm('هل أنت متأكد من الحذف؟')"><button class="delete">حذف</button></a></td>
             </tr>
         <?php endforeach; ?>
     </table>
-    <a href="index.php" style="display:inline-block; margin-top:20px; background:#ddd; padding:10px 20px; text-decoration:none; color:black; border-radius:5px;">⬅️ رجوع للرئيسية</a>
+
+</div>
+
 </body>
 </html>
