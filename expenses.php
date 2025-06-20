@@ -38,7 +38,10 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
 </head>
 <body>
 
-<header>💸 إدارة المصروفات</header>
+<header>
+    <img src="logo.png" alt="شعار مزرعة أحمد" style="height:40px; vertical-align: middle;">
+    <span style="margin-right: 10px;">مزرعة أحمد - إدارة المصروفات</span>
+</header>
 
 <nav>
     <a href="index.php">الرئيسية</a>
@@ -46,6 +49,7 @@ $total = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() ?: 0;
     <a href="income.php">الإيرادات</a>
     <a href="sheep.php">الأغنام</a>
     <a href="change_password.php">كلمة المرور</a>
+    <a href="change_username.php">تغيير الاسم</a>
     <a href="logout.php" style="color:#ffc107;">خروج</a>
 </nav>
 
