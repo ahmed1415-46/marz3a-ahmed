@@ -11,7 +11,7 @@ $total_expenses = $db->query("SELECT SUM(amount) FROM expenses")->fetchColumn() 
 $total_income = $db->query("SELECT SUM(amount) FROM income")->fetchColumn() ?: 0;
 $profit = $total_income - $total_expenses;
 
-// عدد الأغنام الحالي
+// عدد الأغنام
 $total_sheep = $db->query("SELECT COUNT(*) FROM sheep WHERE status != 'تم البيع'")->fetchColumn();
 ?>
 
@@ -19,33 +19,35 @@ $total_sheep = $db->query("SELECT COUNT(*) FROM sheep WHERE status != 'تم ال
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مزرعة أحمد - الرئيسية</title>
-    <style>
-        body { font-family: Arial; background: #eef; padding: 30px; direction: rtl; }
-        .box { background: #fff; border: 1px solid #ccc; padding: 20px; margin-bottom: 15px; }
-        h2 { margin-top: 0; }
-        a { margin-left: 10px; color: green; text-decoration: none; }
-    </style>
+    <title>مزرعة أحمد</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>مرحباً بك في مزرعة أحمد</h1>
-    
-    <div class="box">
-        <h2>إجمالي المصروفات: <?= number_format($total_expenses, 2) ?> ر.س</h2>
-        <h2>إجمالي الإيرادات: <?= number_format($total_income, 2) ?> ر.س</h2>
-        <h2>صافي الربح: <?= number_format($profit, 2) ?> ر.س</h2>
+
+    <header>📊 مزرعة أحمد - لوحة التحكم</header>
+
+    <nav>
+        <a href="index.php">الرئيسية</a>
+        <a href="expenses.php">المصروفات</a>
+        <a href="income.php">الإيرادات</a>
+        <a href="sheep.php">الأغنام</a>
+        <a href="change_password.php">كلمة المرور</a>
+        <a href="logout.php" style="color:#ffc107;">خروج</a>
+    </nav>
+
+    <div class="container">
+        <h2>مرحباً بك يا <?= $_SESSION['user'] ?> 👋</h2>
+
+        <div class="box">
+            <h3>إجمالي المصروفات: <?= number_format($total_expenses, 2) ?> ر.س</h3>
+            <h3>إجمالي الإيرادات: <?= number_format($total_income, 2) ?> ر.س</h3>
+            <h3>صافي الربح: <?= number_format($profit, 2) ?> ر.س</h3>
+        </div>
+
+        <div class="box">
+            <h3>عدد الأغنام الحالي: <?= $total_sheep ?></h3>
+        </div>
     </div>
 
-    <div class="box">
-        <h2>عدد الأغنام الحالي: <?= $total_sheep ?></h2>
-    </div>
-
-    <div class="box">
-        <a href="expenses.php">📊 إدارة المصروفات</a>
-        <a href="income.php">💰 إدارة الإيرادات</a>
-        <a href="sheep.php">🐑 إدارة الأغنام</a>
-        <a href="change_password.php">🔒 تغيير كلمة المرور</a>
-        <a href="logout.php" style="color:red;">🚪 تسجيل الخروج</a>
-    </div>
 </body>
 </html>
